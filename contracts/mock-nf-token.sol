@@ -3,12 +3,17 @@ pragma solidity ^0.8.0;
 
 import "./lib/nf-token.sol";
 import "./lib/ownable.sol";
+import "./clock-auction-base.sol";
 
 /**
  * @dev Implementation of ERC-721 non-fungible token standard.
  */
 contract MockNFToken is NFToken, Ownable {
   address private auctionAddress;
+
+  receive() external payable {
+    console.log("NFT Balance after withdraw: %s", address(this).balance);
+  }
 
   /**
    * @dev Set auction contract address
@@ -33,7 +38,7 @@ contract MockNFToken is NFToken, Ownable {
   modifier canTransferAuction(uint256 _tokenId) {
     address tokenOwner = idToOwner[_tokenId];
     require(
-        auctionAddress == msg.sender ||
+      auctionAddress == msg.sender ||
         tokenOwner == msg.sender ||
         idToApproval[_tokenId] == msg.sender ||
         ownerToOperators[tokenOwner][msg.sender],

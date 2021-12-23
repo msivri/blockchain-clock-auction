@@ -8,10 +8,10 @@ import "./clock-auction-base.sol";
 /// @notice We omit a fallback function to prevent accidental sends to this contract.
 contract ClockAuction is ClockAuctionBase {
   /**
-   * @dev List of revert message codes. Implementing dApp should handle showing the correct message. 
+   * @dev List of revert message codes. Implementing dApp should handle showing the correct message.
    */
   string internal constant INVALID_CUT_AMOUNT = "005001";
-  string internal constant NOT_VALID_NFT = "005002"; 
+  string internal constant NOT_VALID_NFT = "005002";
   string internal constant NOT_OWNER_APPROVED_OR_OPERATOR = "005004";
   string internal constant OWERFLOW_CHECK_FAIL = "009008";
   string internal constant NOT_NFT_OWNER = "009002";
@@ -52,8 +52,13 @@ contract ClockAuction is ClockAuctionBase {
       NOT_OWNER_APPROVED_OR_OPERATOR
     );
 
+    console.log("Balance to withdraw: %s", address(this).balance);
+
     // We are using this boolean method to make sure that even if one fails it will still work
-    bool res = payable(nftAddress).send(address(this).balance);
+    address payable nftPayableAddress = payable(address(nonFungibleContract));
+    nftPayableAddress.transfer(address(this).balance);
+
+    console.log("Balance after withdraw: %s", address(this).balance);
   }
 
   /// @dev Creates and begins a new auction.
@@ -72,8 +77,14 @@ contract ClockAuction is ClockAuctionBase {
   ) external whenNotPaused {
     // Sanity check that no inputs overflow how many bits we've allocated
     // to store them in the auction struct.
-    require(_startingPrice == uint256(uint128(_startingPrice)), OWERFLOW_CHECK_FAIL);
-    require(_endingPrice == uint256(uint128(_endingPrice)), OWERFLOW_CHECK_FAIL);
+    require(
+      _startingPrice == uint256(uint128(_startingPrice)),
+      OWERFLOW_CHECK_FAIL
+    );
+    require(
+      _endingPrice == uint256(uint128(_endingPrice)),
+      OWERFLOW_CHECK_FAIL
+    );
     require(_duration == uint256(uint64(_duration)), OWERFLOW_CHECK_FAIL);
 
     require(_owns(msg.sender, _tokenId), NOT_NFT_OWNER);
@@ -86,7 +97,7 @@ contract ClockAuction is ClockAuctionBase {
       uint64(_duration),
       uint64(block.timestamp)
     );
- 
+
     _addAuction(_tokenId, auction);
   }
 

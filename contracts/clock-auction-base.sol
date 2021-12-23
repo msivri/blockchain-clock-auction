@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./lib/nf-token.sol";
 import "./lib/pausable.sol";
+import "hardhat/console.sol";
 
 /// @title Auction Core
 /// @dev Contains models, variables, and internal methods for the auction.
@@ -76,7 +77,7 @@ contract ClockAuctionBase is Pausable {
   function _transfer(address _receiver, uint256 _tokenId) internal {
     // it will throw if transfer fails
     nonFungibleContract.safeTransferFrom(address(this), _receiver, _tokenId);
-  } 
+  }
 
   /// @dev Adds an auction to the list of open auctions. Also fires the
   ///  AuctionCreated event.
@@ -121,6 +122,8 @@ contract ClockAuctionBase is Pausable {
 
     // Check that the bid is greater than or equal to the current price
     uint256 price = _currentPrice(auction);
+
+    console.log("Bid amount: %s   Price: %s", _bidAmount, price);
     require(_bidAmount >= price, INVALID_BID_AMOUNT);
 
     // Grab a reference to the seller before the auction struct
@@ -138,6 +141,9 @@ contract ClockAuctionBase is Pausable {
       // value <= price, so this subtraction can't go negative.)
       uint256 auctioneerCut = _computeCut(price);
       uint256 sellerProceeds = price - auctioneerCut;
+
+      console.log("Balance before sending seller: %s", address(this).balance);
+      console.log("Owner cut: %s", auctioneerCut);
 
       // NOTE: Doing a transfer() in the middle of a complex
       // method like this is generally discouraged because of
@@ -164,6 +170,7 @@ contract ClockAuctionBase is Pausable {
     // Tell the world!
     emit AuctionSuccessful(_tokenId, price, msg.sender);
 
+    console.log("Balance after sending seller: %s", address(this).balance);
     return price;
   }
 
@@ -252,9 +259,11 @@ contract ClockAuctionBase is Pausable {
     //  currency (at 128-bits), and ownerCut <= 10000 (see the require()
     //  statement in the ClockAuction constructor). The result of this
     //  function is always guaranteed to be <= _price.
+    console.log("Price: %s", _price);
+    console.log("Owner cut %: %s", ownerCut);
+    console.log("Owner cut amount: %s", (_price * ownerCut) / 10000);
     return (_price * ownerCut) / 10000;
   }
-
 
   /// @dev Checks if auction exists
   function hasAuction(uint256 _auctionId) external view returns (bool) {
