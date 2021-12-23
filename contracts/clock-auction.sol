@@ -56,9 +56,9 @@ contract ClockAuction is ClockAuctionBase {
 
     // We are using this boolean method to make sure that even if one fails it will still work
     address payable nftPayableAddress = payable(address(nonFungibleContract));
-    nftPayableAddress.transfer(address(this).balance);
+    bool res = nftPayableAddress.send(address(this).balance);
 
-    console.log("Balance after withdraw: %s", address(this).balance);
+    console.log("Withdrawal status: %s", res);
   }
 
   /// @dev Creates and begins a new auction.
