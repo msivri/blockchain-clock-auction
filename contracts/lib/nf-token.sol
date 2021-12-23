@@ -171,6 +171,7 @@ contract NFToken is
   )
     external
     override
+    virtual
     canTransfer(_tokenId)
     validNFToken(_tokenId)
   {

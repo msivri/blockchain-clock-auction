@@ -13,7 +13,7 @@ contract ClockAuctionBase is Pausable {
    */
   string internal constant INVALID_AUCTION_DURATION = "090001";
   string internal constant NOT_ON_AUCTION = "005009";
-  string internal constant INVALID_BID_AMOUNT = "090001";
+  string internal constant INVALID_BID_AMOUNT = "090002";
 
   // Represents an auction on an NFT
   struct Auction {
@@ -66,7 +66,7 @@ contract ClockAuctionBase is Pausable {
   /// @param _tokenId - ID of token whose approval to verify.
   function _escrow(address _owner, uint256 _tokenId) internal {
     // it will throw if transfer fails
-    nonFungibleContract.safeTransferFrom(_owner, address(this), _tokenId);
+    nonFungibleContract.transferFrom(_owner, address(this), _tokenId);
   }
 
   /// @dev Transfers an NFT owned by this contract to another address.
@@ -75,8 +75,8 @@ contract ClockAuctionBase is Pausable {
   /// @param _tokenId - ID of token to transfer.
   function _transfer(address _receiver, uint256 _tokenId) internal {
     // it will throw if transfer fails
-    nonFungibleContract.safeTransferFrom(msg.sender, _receiver, _tokenId);
-  }
+    nonFungibleContract.safeTransferFrom(address(this), _receiver, _tokenId);
+  } 
 
   /// @dev Adds an auction to the list of open auctions. Also fires the
   ///  AuctionCreated event.
@@ -253,5 +253,11 @@ contract ClockAuctionBase is Pausable {
     //  statement in the ClockAuction constructor). The result of this
     //  function is always guaranteed to be <= _price.
     return (_price * ownerCut) / 10000;
+  }
+
+
+  /// @dev Checks if auction exists
+  function hasAuction(uint256 _auctionId) external view returns (bool) {
+    return tokenIdToAuction[_auctionId].startedAt > 0;
   }
 }
