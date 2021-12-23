@@ -1,8 +1,10 @@
 # Generic Clock Auction Token
 
-This project demonstrates a generic clock auction token that can be used for auctioning NFTs. 
+This project demonstrates a generic clock auction token that I can use for auctioning NFTs. 
 
-Purpose of this project is for me to have an upto date auction contract that can I can update as needed and keep up with new solidity versions.
+The purpose of this project is to have an up-to-date auction contract that I can update as needed and keep up with new solidity versions.
+
+This smart contract is stand-alone and interacts with any NFT that is ERC721 compliant and authorizes this contract to interact with it.
 
 # Use Hardhat
 
