@@ -52,8 +52,4 @@ contract Ownable {
     emit OwnershipTransferred(owner, _newOwner);
     owner = _newOwner;
   }
-
-  function getOwner() public view returns (address) {
-    return owner;
-  }
 }

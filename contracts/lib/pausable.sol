@@ -47,8 +47,4 @@ contract Pausable is Ownable {
     emit Unpause();
     return true;
   }
-
-  function isPaused() public view returns (bool) {
-    return paused;
-  }
 }

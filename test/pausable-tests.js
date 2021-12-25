@@ -10,12 +10,12 @@ describe("Pausable Tests", function () {
     const txPause = await pausable.pause();
     await txPause.wait();
 
-    expect(await pausable.isPaused()).to.equal(true);
+    expect(await pausable.paused()).to.equal(true);
 
     const txUnpause = await pausable.unpause();
     await txUnpause.wait();
 
-    expect(await pausable.isPaused()).to.equal(false);
+    expect(await pausable.paused()).to.equal(false);
   });
 
   it("Should revert if non-owner is trying to pause/unpause", async function () {

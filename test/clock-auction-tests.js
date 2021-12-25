@@ -4,7 +4,7 @@ const { ethers } = require("hardhat");
 describe("Clock Auction", function () {
   const transactionCut = 1000;
   const mockAuction = {
-    tokenId: 1,
+    tokenId: 0,
     startingPrice: ethers.utils.parseEther("2"),
     endingPrice: ethers.utils.parseEther("1"),
     duration: 1000,
@@ -47,27 +47,27 @@ describe("Clock Auction", function () {
   it("Auction should be created", async function () {
     const auction = await createAuction();
 
-    expect(await auction.hasAuction(1)).to.equals(true);
+    expect(await auction.hasAuction(mockAuction.tokenId)).to.equals(true);
   });
 
   it("Auction should be canceled", async function () {
     const [, addr1] = await ethers.getSigners();
     const auction = await createAuction();
 
-    expect(await auction.hasAuction(1)).to.equals(true);
+    expect(await auction.hasAuction(mockAuction.tokenId)).to.equals(true);
     const txCancel = await auction
       .connect(addr1)
       .cancelAuction(mockAuction.tokenId);
     await txCancel.wait();
 
-    expect(await auction.hasAuction(1)).to.equals(false);
+    expect(await auction.hasAuction(mockAuction.tokenId)).to.equals(false);
   });
 
   it("Auction should be bid", async function () {
     // eslint-disable-next-line no-unused-vars
     const [, _, addr2] = await ethers.getSigners();
     const auction = await createAuction();
-    expect(await auction.hasAuction(1)).to.equals(true);
+    expect(await auction.hasAuction(mockAuction.tokenId)).to.equals(true);
 
     const txBid = await auction
       .connect(addr2)
@@ -75,14 +75,14 @@ describe("Clock Auction", function () {
 
     await txBid.wait();
 
-    expect(await auction.hasAuction(1)).to.equals(false);
+    expect(await auction.hasAuction(mockAuction.tokenId)).to.equals(false);
   });
 
   it("Should be able to withdraw cut from auction", async function () {
     // eslint-disable-next-line no-unused-vars
     const [owner, _, addr2] = await ethers.getSigners();
     const auction = await createAuction();
-    expect(await auction.hasAuction(1)).to.equals(true);
+    expect(await auction.hasAuction(mockAuction.tokenId)).to.equals(true);
 
     const txBid = await auction
       .connect(addr2)

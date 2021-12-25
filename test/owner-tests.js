@@ -14,8 +14,8 @@ describe("Owner Test", function () {
     // wait until the transaction is mined
     await tx.wait();
 
-    expect(await ownable.getOwner()).to.equal(addr1.address);
-    expect(await ownable.getOwner()).to.not.equal(owner.address);
+    expect(await ownable.owner()).to.equal(addr1.address);
+    expect(await ownable.owner()).to.not.equal(owner.address);
   });
 
   it("Should not transfer ownership if owner is not contract", async function () {
